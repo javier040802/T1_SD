@@ -1,14 +1,84 @@
-version: '3'
-
 services:
-  app:
-    build: .
-    ports:
-      - "8000:8000"
-    depends_on:
-      - redis
-
   redis:
-    image: redis:latest
+    image: redis:7-alpine
+    command: ["redis-server", "--maxmemory", "${REDIS_MAXMEMORY:-256mb}", "--maxmemory-policy", "${REDIS_MAXMEMORY_POLICY:-allkeys-lru}", "--appendonly", "yes"]
     ports:
       - "6379:6379"
+
+  metrics-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["uvicorn", "services.metrics_service.app:app", "--host", "0.0.0.0", "--port", "8002"]
+    volumes:
+      - ./data:/data
+      - ./shared:/app/shared
+      - ./services:/app/services
+    environment:
+      - PYTHONPATH=/app
+    ports:
+      - "8002:8002"
+
+  response-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["uvicorn", "services.response_service.app:app", "--host", "0.0.0.0", "--port", "8001"]
+    volumes:
+      - ./data:/app/data
+      - ./shared:/app/shared
+      - ./services:/app/services
+    environment:
+      - PYTHONPATH=/app
+      - DATASET_PATH=/app/data/buildings_sample.csv
+    ports:
+      - "8001:8001"
+
+  cache-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["uvicorn", "services.cache_service.app:app", "--host", "0.0.0.0", "--port", "8000"]
+    volumes:
+      - ./data:/data
+      - ./shared:/app/shared
+      - ./services:/app/services
+    environment:
+      - PYTHONPATH=/app
+      - REDIS_URL=redis://redis:6379/0
+      - RESPONSE_SERVICE_URL=http://response-service:8001
+      - METRICS_SERVICE_URL=http://metrics-service:8002
+      - CACHE_TTL_SECONDS=60
+    depends_on:
+      - redis
+      - response-service
+      - metrics-service
+    ports:
+      - "8000:8000"
+
+  traffic-generator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["python", "-m", "services.traffic_generator.app", "--distribution", "zipf", "--requests", "200", "--delay-ms", "20", "--cycles", "1"]
+    volumes:
+      - ./data:/data
+      - ./shared:/app/shared
+      - ./services:/app/services
+    environment:
+      - PYTHONPATH=/app
+      - CACHE_SERVICE_URL=http://cache-service:8000
+    depends_on:
+      - cache-service
+
+  dashboard:
+    image: python:3.11-slim
+    working_dir: /app
+    command: bash -lc "pip install --no-cache-dir streamlit pandas matplotlib requests streamlit-autorefresh && streamlit run dashboard/streamlit_app.py --server.address 0.0.0.0 --server.port 8501"
+    volumes:
+      - ./:/app
+      - ./data:/data
+    ports:
+      - "8501:8501"
+    depends_on:
+      - metrics-service

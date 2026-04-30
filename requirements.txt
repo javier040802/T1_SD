@@ -1,6 +1,10 @@
 fastapi
-uvicorn
+uvicorn[standard]
 redis
+requests
 pandas
 numpy
 matplotlib
+streamlit
+streamlit-autorefresh==1.0.1
+pydantic
