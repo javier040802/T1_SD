@@ -3,11 +3,9 @@ import argparse
 import json
 import time
 from pathlib import Path
-
 import requests
 from shared.config import settings
 from shared.traffic import generate_requests
-
 
 def main():
     parser = argparse.ArgumentParser()
@@ -19,7 +17,6 @@ def main():
     parser.add_argument('--url', type=str, default=settings.cache_service_url + '/query')
     parser.add_argument('--cycles', type=int, default=1, help='Número de rondas completas del patrón de tráfico')
     args = parser.parse_args()
-
     out = Path(args.output)
     out.parent.mkdir(parents=True, exist_ok=True)
     ok = 0
