@@ -21,7 +21,7 @@ Requisitos
 
 - Docker y Docker Compose
 
-## Ejecución
+Ejecución
 
 1. Construir y levantar servicios
 
@@ -44,7 +44,7 @@ curl -X POST http://localhost:8000/query -H "Content-Type: application/json" -d 
 - `http://localhost:8002/summary`
 - `http://localhost:8002/events`
 
-## Configuración
+Configuración
 
 Variables útiles:
 
@@ -53,7 +53,7 @@ Variables útiles:
 - `REDIS_MAXMEMORY_POLICY`
 - `DATASET_PATH`
 
-## Generar tráfico manual
+Generar tráfico manual
 
 Zipf:
 
@@ -67,7 +67,7 @@ Uniforme:
 docker compose run --rm traffic-generator python -m services.traffic_generator.app --distribution uniform --requests 200 --delay-ms 20
 ```
 
-## Benchmark
+Benchmark
 
 Ejecutar:
 
@@ -77,13 +77,7 @@ python scripts/benchmark.py --url http://localhost:8000/query --outdir ./report/
 
 Esto genera CSV y figuras para el informe.
 
-## Dataset
+Dataset
 
 Si no existe `data/buildings_sample.csv`, el servicio de respuesta genera un subconjunto sintético reproducible con las columnas requeridas por la rúbrica.
 
-## Entregables
-
-- Código fuente
-- Docker Compose
-- Informe en LaTeX
-- Dashboard de métricas
