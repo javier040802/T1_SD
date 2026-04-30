@@ -2,15 +2,11 @@ from __future__ import annotations
 import json
 from pathlib import Path
 from typing import Any
-
 import pandas as pd
 from fastapi import FastAPI
 from pydantic import BaseModel
-
 STORE_PATH = Path('/data/metrics.jsonl')
 SUMMARY_PATH = Path('/data/metrics_summary.json')
-
-
 class Event(BaseModel):
     timestamp: float
     request_id: str
@@ -27,21 +23,17 @@ class Event(BaseModel):
     source: str = 'cache-service'
     payload_size: int = 0
 
-
 app = FastAPI(title='metrics-service')
 events: list[dict[str, Any]] = []
-
 
 def _ensure_store() -> None:
     STORE_PATH.parent.mkdir(parents=True, exist_ok=True)
     SUMMARY_PATH.parent.mkdir(parents=True, exist_ok=True)
 
-
 def _append_event(event: dict[str, Any]) -> None:
     _ensure_store()
     with STORE_PATH.open('a', encoding='utf-8') as f:
         f.write(json.dumps(event, ensure_ascii=False) + '\n')
-
 
 def _summary(df: pd.DataFrame) -> dict:
     if df.empty:
