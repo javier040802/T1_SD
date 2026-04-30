@@ -1,12 +1,10 @@
 from __future__ import annotations
 from pathlib import Path
 import json
-
 import pandas as pd
 import requests
 import streamlit as st
 import matplotlib.pyplot as plt
-
 st.set_page_config(page_title='SD T1 Dashboard', layout='wide')
 st.title('Dashboard de métricas - Tarea 1 Sistemas Distribuidos')
 st.caption('Se actualiza automáticamente para mostrar hits, misses, latencia y eventos recientes.')
@@ -77,7 +75,7 @@ except Exception:
     pass
 
 if summary.get('count', 0) == 0:
-    st.info('Aún no hay tráfico registrado. Levanta el generador o envía consultas manuales para poblar el dashboard.')
+    st.info('Aún no hay tráfico registrado.')
 else:
     c1, c2, c3, c4 = st.columns(4)
     c1.metric('Requests', f"{summary.get('count', 0)}")
