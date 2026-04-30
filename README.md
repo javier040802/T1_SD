@@ -1,7 +1,5 @@
 # Tarea 1 - Sistemas Distribuidos
 
-Proyecto completo para la plataforma de análisis de preguntas y respuestas en Internet sobre zonas de Santiago.
-
 ## Arquitectura
 
 - `traffic-generator`: produce tráfico Zipf o uniforme y puede repetir ciclos de carga.
