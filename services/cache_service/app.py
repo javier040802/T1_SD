@@ -8,10 +8,8 @@ import redis
 import requests
 from shared.config import settings
 from shared.models import QueryRequest
-
 app = FastAPI(title="cache-service")
 r = redis.Redis.from_url(settings.redis_url, decode_responses=True)
-
 def cache_key(req: QueryRequest) -> str:
     if req.qtype in {"Q1", "Q2", "Q3", "Q5"}:
         if not req.zone_id:
