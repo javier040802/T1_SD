@@ -11,7 +11,6 @@ import json
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-
 from shared.dataset import DatasetStore, load_dataset
 from shared.query_engine import QueryEngine
 from shared.traffic import generate_requests
@@ -105,7 +104,6 @@ def run_simulation(n=1000, distribution="zipf", policy="lru", capacity_mb=50, tt
     rows = []
     current_time = 0.0
     rng = np.random.default_rng(seed)
-    # warm request stream
     requests = list(generate_requests(n, distribution=distribution, seed=seed))
     for req in requests:
         key = canonical_key(req)
@@ -173,7 +171,6 @@ def main():
     summary_df = pd.DataFrame(summaries)
     summary_df.to_csv(out / "summary_policy_size.csv", index=False)
 
-    # zipf vs uniform overview using lru/200MB
     overview = summary_df[(summary_df["policy"] == "lru") & (summary_df["capacity_mb"] == 200)].copy()
     fig, ax = plt.subplots(figsize=(7,4))
     ax.bar(overview["distribution"], overview["hit_rate"])
@@ -215,7 +212,6 @@ def main():
     fig.savefig(out / "ttl_hit_rate.png", dpi=200)
     plt.close(fig)
 
-    # qtype latency plot from a representative scenario
     rep, _ = run_simulation(n=1000, distribution="zipf", policy="lru", capacity_mb=200, ttl=60, seed=99)
     fig, ax = plt.subplots(figsize=(8,4))
     data = [rep[rep["qtype"] == q]["latency_ms"] for q in ["Q1","Q2","Q3","Q4","Q5"]]
@@ -226,7 +222,6 @@ def main():
     fig.savefig(out / "latency_by_qtype.png", dpi=200)
     plt.close(fig)
 
-    # Make a combined comparison table
     combo = summary_df.pivot_table(index=["distribution","policy"], columns="capacity_mb", values="hit_rate")
     combo.to_csv(out / "hit_rate_pivot.csv")
 
