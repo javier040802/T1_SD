@@ -1,6 +1,6 @@
 # Tarea 1 - Sistemas Distribuidos
 
-## Arquitectura
+Arquitectura
 
 - `traffic-generator`: produce tráfico Zipf o uniforme y puede repetir ciclos de carga.
 - `cache-service`: recibe consultas, consulta Redis, aplica TTL y reporta métricas.
@@ -9,7 +9,7 @@
 - `dashboard`: visualiza resultados desde Streamlit con actualización automática.
 - `redis`: caché con política de remoción configurable.
 
-## Consultas
+Consultas
 
 - Q1: conteo por zona
 - Q2: área promedio y total
@@ -17,7 +17,7 @@
 - Q4: comparación entre dos zonas
 - Q5: distribución de confianza
 
-## Requisitos
+Requisitos
 
 - Docker y Docker Compose
 
